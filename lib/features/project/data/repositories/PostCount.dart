@@ -21,7 +21,7 @@ class PostCount {
                 name: entity.product.name,
                 barcode: entity.product.barcode,
                 description: entity.product.description,
-              ).toEntity(),
+              ),
               quantity: entity.quantity,
               createdAt: entity.createdAt,
             ))

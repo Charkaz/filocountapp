@@ -5,6 +5,7 @@ import 'package:birincisayim/ui/lines_page/bloc/lines_bloc/lines_bloc.dart'
     as lines_bloc;
 import '../widgets/barcode_text.dart';
 import '../widgets/line_list.dart';
+import './CameraCounting.dart';
 
 class LinesPage extends StatefulWidget {
   final CountModel count;
@@ -19,11 +20,14 @@ class _LinesPageState extends State<LinesPage> {
   final TextEditingController miqdarController = TextEditingController();
   final FocusNode barcodeFocusNode = FocusNode();
   late lines_bloc.LinesBloc bloc;
+  late ProductService productService;
 
   @override
   void initState() {
     super.initState();
     bloc = lines_bloc.LinesBloc();
+    productService = ProductService();
+    productService.initializeRepository();
   }
 
   @override
@@ -49,7 +53,7 @@ class _LinesPageState extends State<LinesPage> {
           IconButton(
             icon: const Icon(Icons.search, color: Colors.white, size: 24),
             onPressed: () async {
-              final products = await ProductService.listProject();
+              final products = await productService.listProject();
               if (!context.mounted) return;
 
               showDialog(
@@ -211,41 +215,82 @@ class _LinesPageState extends State<LinesPage> {
             icon: const Icon(Icons.inventory_2_outlined,
                 color: Colors.white, size: 24),
             onPressed: () {
-              _showProductsList(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CameraCounting(count: widget.count),
+                ),
+              );
             },
           ),
           IconButton(
             icon: const Icon(Icons.more_horiz, color: Colors.white, size: 24),
             onPressed: () {
-              showMenu(
+              showDialog(
                 context: context,
-                position: RelativeRect.fromLTRB(
-                  MediaQuery.of(context).size.width - 50,
-                  80,
-                  10,
-                  0,
+                builder: (context) => Dialog(
+                  backgroundColor: const Color(0xFF2A2A2A),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.waving_hand,
+                            color: Colors.blue,
+                            size: 32,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Hello!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Hoş geldiniz!',
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Tamam',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                items: [
-                  PopupMenuItem(
-                    child: Row(
-                      children: [
-                        Icon(Icons.history, size: 20, color: Colors.grey[600]),
-                        const SizedBox(width: 8),
-                        const Text('Geçmiş'),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    child: Row(
-                      children: [
-                        Icon(Icons.info_outline,
-                            size: 20, color: Colors.grey[600]),
-                        const SizedBox(width: 8),
-                        const Text('Bilgi'),
-                      ],
-                    ),
-                  ),
-                ],
               );
             },
           ),
@@ -351,7 +396,7 @@ class _LinesPageState extends State<LinesPage> {
   }
 
   void _showProductsList(BuildContext context) async {
-    final products = await ProductService.listProject();
+    final products = await productService.listProject();
     if (!context.mounted) return;
 
     showDialog(

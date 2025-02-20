@@ -16,4 +16,8 @@ class CountRepository extends GenericRepository<CountModel> {
     await count.save();
     return true;
   }
+
+  Future<void> initialize() async {
+    await openBox();
+  }
 }

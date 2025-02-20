@@ -6,38 +6,54 @@ import 'package:hive/hive.dart';
 import '../../data/models/product_model.dart';
 
 class ProductService {
-  static late ProductRepositoryImpl repository;
+  late ProductRepositoryImpl repository;
 
-  static Future<void> initializeRepository() async {
+  Future<void> initializeRepository() async {
     final box = await Hive.openBox<ProductModel>('products');
     final dataSource = ProductLocalDataSourceImpl(productBox: box);
     repository = ProductRepositoryImpl(localDataSource: dataSource);
   }
 
-  static Future<void> insertAll(List<ProductEntity> products) async {
+  Future<void> insertAll(List<ProductEntity> products) async {
     for (var product in products) {
       await repository.addProduct(product);
     }
   }
 
   static Future<void> clear() async {
-    // Clear functionality will need to be implemented in repository if needed
+    // Clear functionality will be implemented in repository if needed
   }
 
-  static Future<List<ProductEntity>> listProject() async {
+  Future<List<ProductModel>> listProject() async {
     final result = await repository.getProducts();
     return result.fold(
       (failure) => [],
-      (products) => products,
+      (products) => products
+          .map((e) => ProductModel(
+                id: e.id,
+                code: e.code,
+                name: e.name,
+                barcode: e.barcode,
+                description: e.description,
+              ))
+          .toList(),
     );
   }
 
-  static Future<ProductEntity?> getByBarcode(String barcode) async {
+  Future<ProductModel?> getByBarcode(String barcode) async {
     debugPrint('ProductService.getByBarcode called with barcode: $barcode');
     final result = await repository.getProductByBarcode(barcode);
     return result.fold(
       (failure) => null,
-      (product) => product,
+      (product) => product != null
+          ? ProductModel(
+              id: product.id,
+              code: product.code,
+              name: product.name,
+              barcode: product.barcode,
+              description: product.description,
+            )
+          : null,
     );
   }
 }

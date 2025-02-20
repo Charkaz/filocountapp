@@ -7,6 +7,7 @@ class LineEntity extends Equatable {
   final ProductEntity product;
   final double quantity;
   final DateTime createdAt;
+  final DateTime updatedAt;
 
   const LineEntity({
     required this.id,
@@ -14,10 +15,12 @@ class LineEntity extends Equatable {
     required this.product,
     required this.quantity,
     required this.createdAt,
+    required this.updatedAt,
   });
 
   @override
-  List<Object?> get props => [id, countId, product, quantity, createdAt];
+  List<Object?> get props =>
+      [id, countId, product, quantity, createdAt, updatedAt];
 
   factory LineEntity.fromJson(Map<String, dynamic> json) {
     return LineEntity(
@@ -26,6 +29,7 @@ class LineEntity extends Equatable {
       product: ProductEntity.fromJson(json['product'] as Map<String, dynamic>),
       quantity: (json['quantity'] as num).toDouble(),
       createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
   }
 
@@ -36,6 +40,7 @@ class LineEntity extends Equatable {
       'product': product.toJson(),
       'quantity': quantity,
       'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 }

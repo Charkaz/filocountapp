@@ -9,6 +9,7 @@ import '../../features/home/data/repositories/project_repository_impl.dart';
 import '../../features/home/domain/repositories/project_repository.dart';
 import '../../features/home/presentation/bloc/project_bloc.dart';
 import '../../features/home/data/datasources/project_local_data_source.dart';
+import '../../features/counter/domain/usecases/CountService.dart';
 
 final sl = GetIt.instance;
 
@@ -28,14 +29,17 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<Box<LineModel>>(lineBox);
   sl.registerSingleton<Box<CountModel>>(countBox);
 
-  // Data Sources
-  sl.registerLazySingleton<ProjectLocalDataSource>(
-    () => ProjectLocalDataSourceImpl(projectBox: sl()),
-  );
+  // Initialize Services
+  await CountService.initializeRepository();
 
   // Repositories
   sl.registerLazySingleton<ProjectRepository>(
     () => ProjectRepositoryImpl(localDataSource: sl()),
+  );
+
+  // Data Sources
+  sl.registerLazySingleton<ProjectLocalDataSource>(
+    () => ProjectLocalDataSourceImpl(projectBox: sl()),
   );
 
   // BLoCs

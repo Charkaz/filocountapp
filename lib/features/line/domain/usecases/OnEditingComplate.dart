@@ -39,7 +39,7 @@ class OnEditingComplete {
         } else {
           var line = LineModel.create(
             countId: count.id,
-            product: product.toEntity(),
+            product: product,
             quantity: double.parse(miqdarController.text),
           );
           await LineService.addLine(line);

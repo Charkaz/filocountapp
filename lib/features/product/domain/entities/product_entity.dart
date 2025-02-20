@@ -1,10 +1,23 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 
+part 'product_entity.g.dart';
+
+@HiveType(typeId: 5)
 class ProductEntity extends Equatable {
+  @HiveField(0)
   final int id;
+
+  @HiveField(1)
   final String code;
+
+  @HiveField(2)
   final String name;
+
+  @HiveField(3)
   final String barcode;
+
+  @HiveField(4)
   final String description;
 
   const ProductEntity({

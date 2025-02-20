@@ -12,6 +12,8 @@ import 'features/home/presentation/bloc/project_bloc.dart';
 import 'features/line/data/models/line_model.dart';
 import 'features/product/data/models/product_model.dart';
 import 'features/project/data/models/project_model.dart';
+import 'features/product/domain/entities/product_entity.dart';
+import 'core/di/injection_container.dart' as di;
 
 final getIt = GetIt.instance;
 
@@ -162,6 +164,13 @@ Future<void> initHive() async {
           name: "Pepsi Cola 1L",
           barcode: "8690555078901",
           description: "Pepsi Cola Pet Şişe 1L",
+        ),
+        ProductModel(
+          id: 9,
+          code: "P009",
+          name: "Sobranie Siqara",
+          barcode: "4033100024351",
+          description: "Sobranie Siqara",
         ),
       ];
 

@@ -1,4 +1,4 @@
-import 'package:birincisayim/features/line/domain/entities/line_entity.dart';
+import 'package:birincisayim/features/line/data/models/line_model.dart';
 import 'package:bloc/bloc.dart';
 
 import 'package:birincisayim/features/line/data/services/line_service.dart';

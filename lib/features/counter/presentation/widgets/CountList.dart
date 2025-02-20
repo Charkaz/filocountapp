@@ -53,6 +53,7 @@ class _CountListState extends State<CountList> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             padding: const EdgeInsets.all(12),
@@ -92,87 +93,87 @@ class _CountListState extends State<CountList> {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: count.isSend
-                                            ? Colors.green.withOpacity(0.1)
-                                            : Colors.orange.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            count.isSend
-                                                ? Icons.check_circle_outline
-                                                : Icons.pending_outlined,
-                                            size: 14,
-                                            color: count.isSend
-                                                ? Colors.green
-                                                : Colors.orange[700],
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            count.isSend
-                                                ? "Aktarıldı"
-                                                : "Beklemede",
-                                            style: TextStyle(
-                                              fontSize: 12,
+                                const SizedBox(height: 12),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: count.isSend
+                                              ? Colors.green.withOpacity(0.1)
+                                              : Colors.orange.withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              count.isSend
+                                                  ? Icons.check_circle_outline
+                                                  : Icons.pending_outlined,
+                                              size: 14,
                                               color: count.isSend
                                                   ? Colors.green
                                                   : Colors.orange[700],
-                                              fontWeight: FontWeight.w500,
                                             ),
-                                          ),
-                                        ],
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              count.isSend
+                                                  ? "Aktarıldı"
+                                                  : "Beklemede",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: count.isSend
+                                                    ? Colors.green
+                                                    : Colors.orange[700],
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF3E3E4A),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(
-                                            Icons.tag,
-                                            size: 14,
-                                            color: Colors.white70,
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            "ID: ${count.id}",
-                                            style: const TextStyle(
-                                              fontSize: 12,
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF3E3E4A),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(
+                                              Icons.tag,
+                                              size: 14,
                                               color: Colors.white70,
-                                              fontWeight: FontWeight.w500,
                                             ),
-                                          ),
-                                        ],
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              "ID: ${count.id}",
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.white70,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                          const Icon(
-                            Icons.chevron_right_rounded,
-                            color: Colors.white38,
-                            size: 24,
                           ),
                         ],
                       ),
@@ -187,86 +188,54 @@ class _CountListState extends State<CountList> {
     );
   }
 
-  void _showUploadDialog(BuildContext context, CountModel count) {
-    if (count.isSend) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Bu sayım zaten merkeze aktarılmış"),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-
-    showDialog(
+  Future<void> _showUploadDialog(BuildContext context, CountModel count) async {
+    return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2D2D3A),
+        backgroundColor: const Color(0xFF2A2A2A),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.cloud_upload_outlined,
-                color: Colors.blue,
-                size: 24,
-              ),
-            ),
-            const SizedBox(width: 12),
-            const Expanded(
-              child: Text(
-                "Sayımı Merkeze Aktar",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  letterSpacing: -0.5,
-                ),
-              ),
-            ),
-          ],
+        title: const Text(
+          'Merkeze Aktar',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         content: Text(
-          "Bu sayımı merkeze aktarmak istediğinize emin misiniz?",
+          'Bu sayımı merkeze aktarmak istediğinize emin misiniz?',
           style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[300],
+            color: Colors.grey[400],
+            fontSize: 16,
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.grey[400],
-            ),
-            child: const Text(
-              "İptal",
+            child: Text(
+              'İptal',
               style: TextStyle(
-                fontWeight: FontWeight.w500,
+                color: Colors.grey[400],
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.cloud_upload, size: 18),
-            label: const Text("Aktar"),
+          ElevatedButton(
             onPressed: () => _uploadCount(context, count),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
+              backgroundColor: const Color(0xFF007AFF),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              'Aktar',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

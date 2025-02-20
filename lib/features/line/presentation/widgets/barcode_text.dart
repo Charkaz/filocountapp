@@ -594,21 +594,14 @@ class _BarcodeTextState extends State<BarcodeText> {
   void _onBarcodeEntered(BuildContext context) async {
     if (widget.barcodeController.text.isEmpty) return;
 
-    if (_isSingleMode) {
-      widget.miqdarController.text = "1";
-    }
-
     await OnEditingComplete.onEditingComplete(
       widget.bloc,
       widget.miqdarController,
       widget.barcodeController,
       context,
       widget.count,
+      _isSingleMode,
     );
-
-    if (_isSingleMode) {
-      widget.miqdarController.clear();
-    }
 
     widget.barcodeFocusNode.requestFocus();
   }

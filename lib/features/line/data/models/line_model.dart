@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import '../../domain/entities/line_entity.dart';
-import '../../../product/domain/entities/product_entity.dart';
+import '../../../product/data/models/product_model.dart';
 
 part 'line_model.g.dart';
 
@@ -13,7 +13,7 @@ class LineModel extends HiveObject {
   final int countId;
 
   @HiveField(2)
-  final ProductEntity product;
+  final ProductModel product;
 
   @HiveField(3)
   double quantity;
@@ -21,16 +21,21 @@ class LineModel extends HiveObject {
   @HiveField(4)
   final DateTime createdAt;
 
+  @HiveField(5)
+  DateTime updatedAt;
+
   LineModel({
     required this.id,
     required this.countId,
     required this.product,
     required this.quantity,
     required this.createdAt,
-  });
+    DateTime? updatedAt,
+  }) : updatedAt = updatedAt ?? createdAt;
 
   void updateQuantity(double newQuantity) {
     quantity = newQuantity;
+    updatedAt = DateTime.now();
     save();
   }
 
@@ -38,9 +43,10 @@ class LineModel extends HiveObject {
     return LineModel(
       id: json['id'] as int,
       countId: json['countId'] as int,
-      product: ProductEntity.fromJson(json['product'] as Map<String, dynamic>),
+      product: ProductModel.fromJson(json['product'] as Map<String, dynamic>),
       quantity: (json['quantity'] as num).toDouble(),
       createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
   }
 
@@ -51,6 +57,7 @@ class LineModel extends HiveObject {
       'product': product.toJson(),
       'quantity': quantity,
       'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
@@ -58,9 +65,16 @@ class LineModel extends HiveObject {
     return LineModel(
       id: entity.id,
       countId: entity.countId,
-      product: entity.product,
+      product: ProductModel(
+        id: entity.product.id,
+        code: entity.product.code,
+        name: entity.product.name,
+        barcode: entity.product.barcode,
+        description: entity.product.description,
+      ),
       quantity: entity.quantity,
       createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     );
   }
 
@@ -68,23 +82,26 @@ class LineModel extends HiveObject {
     return LineEntity(
       id: id,
       countId: countId,
-      product: product,
+      product: product.toEntity(),
       quantity: quantity,
       createdAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
 
   factory LineModel.create({
     required int countId,
-    required ProductEntity product,
+    required ProductModel product,
     required double quantity,
   }) {
+    final now = DateTime.now();
     return LineModel(
-      id: DateTime.now().millisecondsSinceEpoch,
+      id: now.millisecondsSinceEpoch,
       countId: countId,
       product: product,
       quantity: quantity,
-      createdAt: DateTime.now(),
+      createdAt: now,
+      updatedAt: now,
     );
   }
 }
