@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../counter/presentation/pages/CountListPage.dart';
-import '../../../counter/presentation/pages/CounterPage.dart';
 import '../bloc/project_bloc.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:birincisayim/features/counter/presentation/pages/counter_page.dart';
 
 class CreateProjectDialog extends StatefulWidget {
   const CreateProjectDialog({super.key});

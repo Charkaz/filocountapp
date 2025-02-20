@@ -8,7 +8,6 @@ import 'package:birincisayim/features/project/data/repositories/GetProjects.dart
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:birincisayim/features/counter/presentation/pages/CounterPage.dart';
 import 'package:birincisayim/features/counter/presentation/pages/CountListPage.dart';
 
 class Homepage extends StatefulWidget {
