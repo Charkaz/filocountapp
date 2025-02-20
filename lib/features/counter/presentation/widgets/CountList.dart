@@ -41,7 +41,7 @@ class _CountListState extends State<CountList> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    CupertinoPageRoute(
+                    MaterialPageRoute(
                       builder: (_) => LinesPage(count: count),
                     ),
                   );

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/project_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:birincisayim/features/counter/presentation/pages/counter_page.dart';
+import 'package:birincisayim/features/counter/presentation/pages/CountListPage.dart';
 
 class ProjectCard extends StatelessWidget {
   final ProjectModel project;
@@ -28,7 +28,9 @@ class ProjectCard extends StatelessWidget {
           Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (_) => CounterPage(project: project),
+              builder: (_) => CountListPage(
+                project: project,
+              ),
             ),
           );
         },

@@ -2,11 +2,14 @@ import 'package:birincisayim/features/product/data/repositories/GetProducts.dart
 import 'package:birincisayim/commons/ServerUrlHelper.dart';
 import 'package:birincisayim/features/product/data/services/product_service.dart';
 import 'package:birincisayim/features/project/data/services/project_service.dart';
-import 'package:birincisayim/features/counter/presentation/pages/counter_page.dart';
+import 'package:birincisayim/features/counter/domain/usecases/CountService.dart';
+import 'package:birincisayim/features/line/presentation/pages/LinesPage.dart';
 import 'package:birincisayim/features/project/data/repositories/GetProjects.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:birincisayim/features/counter/presentation/pages/CounterPage.dart';
+import 'package:birincisayim/features/counter/presentation/pages/CountListPage.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -82,12 +85,15 @@ class _HomepageState extends State<Homepage> {
                         itemBuilder: (context, index) {
                           final project = snapshot.data![index];
                           return ListTile(
-                            onTap: () async {
+                            onTap: () {
                               Navigator.push(
-                                  context,
-                                  CupertinoPageRoute(
-                                      builder: (_) =>
-                                          CounterPage(project: project)));
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (_) => CountListPage(
+                                    project: project,
+                                  ),
+                                ),
+                              );
                             },
                             leading: const Icon(Icons.document_scanner),
                             title: Text(project.description),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../counter/presentation/pages/CountListPage.dart';
+import '../../../counter/presentation/pages/CounterPage.dart';
 import '../bloc/project_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:birincisayim/features/counter/presentation/pages/counter_page.dart';
@@ -36,7 +38,7 @@ class _CreateProjectDialogState extends State<CreateProjectDialog> {
           Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (_) => CounterPage(project: state.projects.last),
+              builder: (_) => CountListPage(project: state.projects.last),
             ),
           );
         } else if (state is ProjectError) {
