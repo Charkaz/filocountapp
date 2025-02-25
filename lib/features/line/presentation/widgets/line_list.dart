@@ -31,34 +31,6 @@ class _LineListState extends State<LineList> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void _startDeleteAnimation(int lineId) async {
-    final controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-
-    _controllers[lineId] = controller;
-
-    try {
-      await controller.forward().orCancel;
-      await LineService.deleteLine(lineId);
-      widget.bloc.add(lines_bloc.ListLineEvent(widget.count.id));
-    } catch (e) {
-      controller.reverse();
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Silme işlemi başarısız: ${e.toString()}'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    } finally {
-      _controllers.remove(lineId);
-      controller.dispose();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<lines_bloc.LinesBloc, lines_bloc.LinesState>(
@@ -347,7 +319,101 @@ class _LineListState extends State<LineList> with TickerProviderStateMixin {
               title: const Text('Sil', style: TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.pop(context);
-                _startDeleteAnimation(line.id);
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: const Color(0xFF2A2A2A),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    title: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Ürünü Sil',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    content: Text(
+                      '${line.product.name} ürününü silmek istediğinize emin misiniz?',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text(
+                          'İptal',
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          try {
+                            await LineService.deleteLine(line.id);
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                              widget.bloc.add(
+                                  lines_bloc.ListLineEvent(widget.count.id));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Ürün başarıyla silindi'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Hata: ${e.toString()}'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Sil',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               },
             ),
           ],

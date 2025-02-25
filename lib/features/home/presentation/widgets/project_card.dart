@@ -84,7 +84,7 @@ class ProjectCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              project.name,
+                              project.description,
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -95,7 +95,7 @@ class ProjectCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              project.description,
+                              'İş Yeri: ${project.isYeri}, Anbar: ${project.anbar}',
                               style: const TextStyle(
                                 fontSize: 13,
                                 color: Color(0xFFB4B4BE),
@@ -334,7 +334,7 @@ class ProjectCard extends StatelessWidget {
           ],
         ),
         content: Text(
-          '${project.name} projesini silmek istediğinize emin misiniz?',
+          '${project.description} projesini silmek istediğinize emin misiniz?',
           style: TextStyle(
             fontSize: 13,
             color: Colors.grey[300],

@@ -1,14 +1,37 @@
-import 'package:birincisayim/core/services/dio_helper.dart';
+import 'package:dio/dio.dart';
 import '../models/count_model.dart';
 
 class PostCount {
-  static Future<String> post(CountModel count) async {
+  static Future<int> post(CountModel count) async {
     try {
-      final response = await DioHelper.instance.postData(
-        endpoint: '/counts',
-        data: count.toJson(),
+      final dio = Dio();
+
+      // API'ye gönderilecek veriyi hazırla
+      final Map<String, dynamic> data = {
+        "projectId": count.projectId,
+        "description": count.description,
+        "controlGuid": count.controlGuid,
+        "lines": count.lines
+            .map((line) => {
+                  "productId": line.product.id,
+                  "productCode": line.product.code,
+                  "productBarcode": line.product.barcode,
+                  "productName": line.product.name,
+                  "miqdar": line.quantity
+                })
+            .toList()
+      };
+
+      final response = await dio.post(
+        'http://192.168.137.1:5000/api/counter/Counts',
+        data: data,
       );
-      return response.data['id'].toString();
+
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      } else {
+        throw Exception('Sunucu hatası: ${response.statusCode}');
+      }
     } catch (e) {
       rethrow;
     }

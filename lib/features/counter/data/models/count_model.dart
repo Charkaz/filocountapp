@@ -7,7 +7,7 @@ part 'count_model.g.dart';
 @HiveType(typeId: 1)
 class CountModel extends HiveObject {
   @HiveField(0)
-  final int id;
+  final String id;
 
   @HiveField(1)
   final int projectId;
@@ -16,33 +16,31 @@ class CountModel extends HiveObject {
   final String description;
 
   @HiveField(3)
-  final String controlGuid;
+  final List<LineModel> lines;
 
   @HiveField(4)
   bool isSend;
 
   @HiveField(5)
-  final List<LineModel> lines;
+  final String controlGuid;
 
   CountModel({
     required this.id,
     required this.projectId,
     required this.description,
-    required this.controlGuid,
-    this.isSend = false,
     required this.lines,
+    this.isSend = false,
+    required this.controlGuid,
   });
 
   factory CountModel.fromJson(Map<String, dynamic> json) {
     return CountModel(
-      id: json['id'] as int,
+      id: json['id'] as String,
       projectId: json['projectId'] as int,
       description: json['description'] as String,
+      lines: (json['lines'] as List).map((e) => LineModel.fromJson(e)).toList(),
+      isSend: json['isSend'] as bool? ?? false,
       controlGuid: json['controlGuid'] as String,
-      isSend: json['isSend'] as bool,
-      lines: (json['lines'] as List<dynamic>)
-          .map((e) => LineModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
     );
   }
 
@@ -51,9 +49,9 @@ class CountModel extends HiveObject {
       'id': id,
       'projectId': projectId,
       'description': description,
-      'controlGuid': controlGuid,
-      'isSend': isSend,
       'lines': lines.map((e) => e.toJson()).toList(),
+      'isSend': isSend,
+      'controlGuid': controlGuid,
     };
   }
 }

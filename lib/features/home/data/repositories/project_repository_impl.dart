@@ -22,14 +22,12 @@ class ProjectRepositoryImpl implements ProjectRepository {
 
   @override
   Future<Either<Failure, ProjectModel>> createProject(
-    String name,
     String description,
     String isYeri,
     String anbar,
   ) async {
     try {
       final project = await localDataSource.createProject(
-        name,
         description,
         isYeri,
         anbar,

@@ -1,47 +1,44 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'line_model.dart';
+part of 'product_entity.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class LineModelAdapter extends TypeAdapter<LineModel> {
+class ProductEntityAdapter extends TypeAdapter<ProductEntity> {
   @override
-  final int typeId = 2;
+  final int typeId = 5;
 
   @override
-  LineModel read(BinaryReader reader) {
+  ProductEntity read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return LineModel(
-      id: fields[0] as String,
-      countId: fields[1] as String,
-      product: fields[2] as ProductModel,
-      quantity: fields[3] as double,
-      createdAt: fields[4] as DateTime,
-      updatedAt: fields[5] as DateTime?,
+    return ProductEntity(
+      id: fields[0] as int,
+      code: fields[1] as String,
+      name: fields[2] as String,
+      barcode: fields[3] as String,
+      description: fields[4] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, LineModel obj) {
+  void write(BinaryWriter writer, ProductEntity obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.countId)
+      ..write(obj.code)
       ..writeByte(2)
-      ..write(obj.product)
+      ..write(obj.name)
       ..writeByte(3)
-      ..write(obj.quantity)
+      ..write(obj.barcode)
       ..writeByte(4)
-      ..write(obj.createdAt)
-      ..writeByte(5)
-      ..write(obj.updatedAt);
+      ..write(obj.description);
   }
 
   @override
@@ -50,7 +47,7 @@ class LineModelAdapter extends TypeAdapter<LineModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is LineModelAdapter &&
+      other is ProductEntityAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

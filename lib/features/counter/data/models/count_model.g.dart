@@ -17,7 +17,7 @@ class CountModelAdapter extends TypeAdapter<CountModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return CountModel(
-      id: fields[0] as int,
+      id: fields[0] as String,
       projectId: fields[1] as int,
       description: fields[2] as String,
       controlGuid: fields[3] as String,

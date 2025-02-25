@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 
 import '../models/product_model.dart';
@@ -50,6 +51,41 @@ class ProductService {
     await initializeRepository();
     for (var product in products) {
       await _box!.put(product.id, product);
+    }
+  }
+
+  static Future<void> syncProducts() async {
+    try {
+      final dio = Dio();
+      final response =
+          await dio.get('http://192.168.137.1:5000/api/counter/Product');
+
+      if (response.statusCode == 200) {
+        final data = response.data['data'] as List;
+        final products = data
+            .map((item) => ProductModel(
+                  id: item['logicalref'],
+                  code: item['code'],
+                  name: item['name'],
+                  barcode: item['barcode'],
+                  description: item[
+                      'name'], // API'den description gelmediği için name'i kullanıyoruz
+                ))
+            .toList();
+
+        // Hive box'ı aç
+        final box = await Hive.openBox<ProductModel>('products');
+
+        // Mevcut ürünleri temizle
+        await box.clear();
+
+        // Yeni ürünleri kaydet
+        for (var product in products) {
+          await box.add(product);
+        }
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }

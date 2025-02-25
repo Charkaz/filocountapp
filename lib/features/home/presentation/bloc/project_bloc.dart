@@ -97,7 +97,6 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   ) async {
     emit(ProjectLoading());
     final result = await repository.createProject(
-      event.name,
       event.description,
       event.isYeri,
       event.anbar,

@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 import '../../../product/domain/entities/product_entity.dart';
 
 class LineEntity extends Equatable {
-  final int id;
-  final int countId;
+  final String id;
+  final String countId;
   final ProductEntity product;
   final double quantity;
   final DateTime createdAt;
@@ -24,8 +24,8 @@ class LineEntity extends Equatable {
 
   factory LineEntity.fromJson(Map<String, dynamic> json) {
     return LineEntity(
-      id: json['id'] as int,
-      countId: json['countId'] as int,
+      id: json['id'] as String,
+      countId: json['countId'] as String,
       product: ProductEntity.fromJson(json['product'] as Map<String, dynamic>),
       quantity: (json['quantity'] as num).toDouble(),
       createdAt: DateTime.parse(json['createdAt'] as String),

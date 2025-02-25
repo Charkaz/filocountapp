@@ -9,23 +9,19 @@ class ProjectModel extends HiveObject {
   final int id;
 
   @HiveField(1)
-  final String name;
-
-  @HiveField(2)
   final String description;
 
+  @HiveField(2)
+  final int isYeri;
+
   @HiveField(3)
-  final String isYeri;
+  final int anbar;
 
   @HiveField(4)
-  final String anbar;
-
-  @HiveField(5)
   final DateTime createdAt;
 
   ProjectModel({
     required this.id,
-    required this.name,
     required this.description,
     required this.isYeri,
     required this.anbar,
@@ -34,19 +30,17 @@ class ProjectModel extends HiveObject {
 
   factory ProjectModel.fromJson(Map<String, dynamic> json) {
     return ProjectModel(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      isYeri: json['isYeri'] as String,
-      anbar: json['anbar'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      id: json['id'],
+      description: json['description'],
+      isYeri: json['isYeri'],
+      anbar: json['anbar'],
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
       'description': description,
       'isYeri': isYeri,
       'anbar': anbar,
@@ -56,10 +50,10 @@ class ProjectModel extends HiveObject {
 
   ProjectEntity toEntity() => ProjectEntity(
         id: id,
-        name: name,
+        name: '',
         description: description,
-        isYeri: isYeri,
-        anbar: anbar,
+        isYeri: isYeri.toString(),
+        anbar: anbar.toString(),
         createdAt: createdAt,
       );
 }

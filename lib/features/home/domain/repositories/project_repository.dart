@@ -5,7 +5,6 @@ import '../../../project/data/models/project_model.dart';
 abstract class ProjectRepository {
   Future<Either<Failure, List<ProjectModel>>> getProjects();
   Future<Either<Failure, ProjectModel>> createProject(
-    String name,
     String description,
     String isYeri,
     String anbar,

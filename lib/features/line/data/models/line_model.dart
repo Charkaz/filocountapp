@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:uuid/uuid.dart';
 import '../../domain/entities/line_entity.dart';
 import '../../../product/data/models/product_model.dart';
 
@@ -7,10 +8,10 @@ part 'line_model.g.dart';
 @HiveType(typeId: 2)
 class LineModel extends HiveObject {
   @HiveField(0)
-  final int id;
+  final String id;
 
   @HiveField(1)
-  final int countId;
+  final String countId;
 
   @HiveField(2)
   final ProductModel product;
@@ -41,8 +42,8 @@ class LineModel extends HiveObject {
 
   factory LineModel.fromJson(Map<String, dynamic> json) {
     return LineModel(
-      id: json['id'] as int,
-      countId: json['countId'] as int,
+      id: json['id'] as String,
+      countId: json['countId'] as String,
       product: ProductModel.fromJson(json['product'] as Map<String, dynamic>),
       quantity: (json['quantity'] as num).toDouble(),
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -90,13 +91,14 @@ class LineModel extends HiveObject {
   }
 
   factory LineModel.create({
-    required int countId,
+    required String countId,
     required ProductModel product,
     required double quantity,
   }) {
     final now = DateTime.now();
+    final uuid = Uuid();
     return LineModel(
-      id: now.millisecondsSinceEpoch,
+      id: uuid.v4(),
       countId: countId,
       product: product,
       quantity: quantity,

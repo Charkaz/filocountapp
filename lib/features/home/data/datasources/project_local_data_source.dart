@@ -4,7 +4,6 @@ import '../../../project/data/models/project_model.dart';
 abstract class ProjectLocalDataSource {
   Future<List<ProjectModel>> getProjects();
   Future<ProjectModel> createProject(
-    String name,
     String description,
     String isYeri,
     String anbar,
@@ -24,17 +23,15 @@ class ProjectLocalDataSourceImpl implements ProjectLocalDataSource {
 
   @override
   Future<ProjectModel> createProject(
-    String name,
     String description,
     String isYeri,
     String anbar,
   ) async {
     final project = ProjectModel(
-      id: (DateTime.now().millisecondsSinceEpoch.toInt() / 10000).toInt(), //
-      name: name,
+      id: (DateTime.now().millisecondsSinceEpoch.toInt() / 10000).toInt(),
       description: description,
-      isYeri: isYeri,
-      anbar: anbar,
+      isYeri: int.parse(isYeri),
+      anbar: int.parse(anbar),
       createdAt: DateTime.now(),
     );
     await projectBox.put(project.id, project);

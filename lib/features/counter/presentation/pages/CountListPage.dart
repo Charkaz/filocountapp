@@ -300,7 +300,10 @@ class _CountListPageState extends State<CountListPage> {
                           parent: BouncingScrollPhysics(),
                         ),
                         children: [
-                          CountList(counts: snapshot.data!),
+                          CountList(
+                            counts: snapshot.data!,
+                            onCountDeleted: () => setState(() {}),
+                          ),
                         ],
                       ),
                     ),

@@ -9,7 +9,7 @@ class CountRepository extends GenericRepository<CountModel> {
     return box.values.where((count) => count.projectId == projectId).toList();
   }
 
-  Future<bool> updateIsSend(int countId) async {
+  Future<bool> updateIsSend(String countId) async {
     final box = await openBox();
     var count = box.values.firstWhere((count) => count.id == countId);
     count.isSend = true;

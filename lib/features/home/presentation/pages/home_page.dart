@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../bloc/project_bloc.dart';
 import '../widgets/project_card.dart';
-import '../widgets/create_project_dialog.dart';
+import '../widgets/home_app_bar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -17,40 +16,7 @@ class HomePage extends StatelessWidget {
           body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
-                SliverAppBar(
-                  expandedHeight: 180,
-                  floating: false,
-                  pinned: true,
-                  backgroundColor: Colors.black,
-                  surfaceTintColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  elevation: 0,
-                  scrolledUnderElevation: 0,
-                  flexibleSpace: LayoutBuilder(
-                    builder:
-                        (BuildContext context, BoxConstraints constraints) {
-                      final top = constraints.biggest.height;
-                      const expandedHeight = 180.0;
-                      final shrinkOffset = expandedHeight - top;
-                      final progress = shrinkOffset / expandedHeight;
-
-                      return Container(
-                        color: Colors.black,
-                        child: FlexibleSpaceBar(
-                          centerTitle: true,
-                          titlePadding: const EdgeInsets.only(bottom: 16),
-                          background: Container(color: Colors.black),
-                          title: SvgPicture.asset(
-                            'assets/logo.svg',
-                            height: progress < 0.5 ? 60 : 48,
-                            fit: BoxFit.contain,
-                          ),
-                          collapseMode: CollapseMode.parallax,
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                const HomeAppBar(),
               ];
             },
             body: Container(
@@ -128,16 +94,6 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => const CreateProjectDialog(),
-              );
-            },
-            label: const Text('Yeni Proje'),
-            icon: const Icon(Icons.add),
           ),
         );
       },

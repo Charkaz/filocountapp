@@ -11,7 +11,7 @@ class LineService {
     _box = await Hive.openBox<LineModel>('lines');
   }
 
-  static Future<List<LineModel>> getLinesByCount(int countId) async {
+  static Future<List<LineModel>> getLinesByCount(String countId) async {
     await initializeRepository();
     final lines =
         _box!.values.where((line) => line.countId == countId).toList();
@@ -29,10 +29,13 @@ class LineService {
     await _box!.put(line.id, line);
   }
 
-  static Future<void> deleteLine(int id) async {
+  static Future<void> deleteLine(String id) async {
     await initializeRepository();
-    final line = _box!.values.firstWhere((line) => line.id == id);
-    await line.delete();
+    final key = _box!.keys.firstWhere(
+      (k) => _box!.get(k)?.id == id,
+      orElse: () => throw Exception('Satır bulunamadı'),
+    );
+    await _box!.delete(key);
   }
 
   static Future<LineModel?> listLinesByProduct({
