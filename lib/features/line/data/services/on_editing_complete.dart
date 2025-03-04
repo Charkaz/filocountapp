@@ -1,3 +1,4 @@
+import 'package:birincisayim/features/product/data/models/product_model.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/line_entity.dart';
 import 'package:birincisayim/ui/lines_page/bloc/lines_bloc/lines_bloc.dart'
@@ -19,7 +20,24 @@ class OnEditingComplete {
     if (barcodeController.text.isEmpty) return;
 
     try {
-      final product = await ProductService.getByBarcode(barcodeController.text);
+      final quantityController = TextEditingController(
+        text: isSingleMode ? "1" : "",
+      );
+
+      ProductModel? product;
+      if (barcodeController.text.startsWith("27")) {
+        product = await ProductService.getByBarcode(
+            barcodeController.text.substring(0, 7));
+        debugPrint(barcodeController.text.substring(0, 7));
+
+        product = await ProductService.getByBarcode(
+            barcodeController.text.substring(0, 7));
+        quantityController.text =
+            (double.parse(barcodeController.text.substring(7, 12)) / 1000)
+                .toString();
+      } else {
+        product = await ProductService.getByBarcode(barcodeController.text);
+      }
       if (product == null) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -35,10 +53,6 @@ class OnEditingComplete {
       );
 
       if (!context.mounted) return;
-
-      final quantityController = TextEditingController(
-        text: isSingleMode ? "1" : "",
-      );
 
       await showDialog(
         context: context,
@@ -85,7 +99,7 @@ class OnEditingComplete {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              product.name,
+                              product!.name,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -342,7 +356,7 @@ class OnEditingComplete {
                               } else {
                                 final line = LineModel.create(
                                   countId: count.id,
-                                  product: product,
+                                  product: product!,
                                   quantity: finalQuantity,
                                 );
                                 await LineService.addLine(line);
