@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 import '../models/product_model.dart';
 import '../../../project/data/models/project_model.dart';
+import '../../../../core/services/settings_service.dart';
 
 class SyncService {
   static Future<void> syncAll() async {
@@ -14,8 +15,9 @@ class SyncService {
   static Future<void> syncProducts() async {
     try {
       final dio = Dio();
-      final response =
-          await dio.get('http://192.168.137.1:5000/api/counter/Product');
+      final settings = await SettingsService.getSettings();
+      final baseUrl = 'http://${settings['host']}:${settings['port']}';
+      final response = await dio.get('$baseUrl/api/counter/Product');
 
       if (response.statusCode == 200) {
         final data = response.data['data'] as List;
@@ -48,8 +50,9 @@ class SyncService {
   static Future<void> syncProjects() async {
     try {
       final dio = Dio();
-      final response =
-          await dio.get('http://192.168.137.1:5000/api/counter/Projects');
+      final settings = await SettingsService.getSettings();
+      final baseUrl = 'http://${settings['host']}:${settings['port']}';
+      final response = await dio.get('$baseUrl/api/counter/Projects');
 
       if (response.statusCode == 200) {
         final data = response.data['data'] as List;

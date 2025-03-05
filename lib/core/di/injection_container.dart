@@ -5,6 +5,7 @@ import '../../features/line/data/models/line_model.dart';
 import '../../features/product/data/models/product_model.dart';
 import '../../features/project/data/models/project_model.dart';
 import '../services/dio_helper.dart';
+import '../services/settings_service.dart';
 import '../../features/home/data/repositories/project_repository_impl.dart';
 import '../../features/home/domain/repositories/project_repository.dart';
 import '../../features/home/presentation/bloc/project_bloc.dart';
@@ -16,6 +17,7 @@ final sl = GetIt.instance;
 Future<void> initializeDependencies() async {
   // Services
   sl.registerSingleton<DioHelper>(DioHelper.instance);
+  await SettingsService.init();
 
   // Hive Boxes
   final projectBox = await Hive.openBox<ProjectModel>('projects');
