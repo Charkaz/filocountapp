@@ -1,6 +1,5 @@
 import '../../data/repositories/count_repository.dart';
 import '../../data/models/count_model.dart';
-import '../../../line/data/models/line_model.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 

@@ -10,7 +10,7 @@ import '../../features/home/data/repositories/project_repository_impl.dart';
 import '../../features/home/domain/repositories/project_repository.dart';
 import '../../features/home/presentation/bloc/project_bloc.dart';
 import '../../features/home/data/datasources/project_local_data_source.dart';
-import '../../features/counter/domain/usecases/CountService.dart';
+import '../../features/counter/domain/usecases/count_service.dart';
 
 final sl = GetIt.instance;
 

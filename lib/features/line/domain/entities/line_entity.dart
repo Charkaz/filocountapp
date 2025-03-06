@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../../product/domain/entities/product_entity.dart';
+import '../../data/models/line_model.dart';
 
 class LineEntity extends Equatable {
   final String id;
@@ -42,5 +43,16 @@ class LineEntity extends Equatable {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
+  }
+
+  LineModel toModel() {
+    return LineModel(
+      id: id,
+      countId: countId,
+      product: product.toModel(),
+      quantity: quantity,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+    );
   }
 }

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/project_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:birincisayim/features/counter/presentation/pages/CountListPage.dart';
+import 'package:birincisayim/features/counter/presentation/pages/count_list_page.dart';
 
 class ProjectCard extends StatelessWidget {
   final ProjectModel project;

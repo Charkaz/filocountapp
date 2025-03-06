@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'settings_service.dart';
 
 class DioService {
@@ -53,9 +54,9 @@ class DioService {
       );
       return response;
     } on DioException catch (e) {
-      print('Dio Hatası: ${e.type}');
-      print('Hata Mesajı: ${e.message}');
-      print('Hata Yanıtı: ${e.response?.data}');
+      debugPrint('Dio Hatası: ${e.type}');
+      debugPrint('Hata Mesajı: ${e.message}');
+      debugPrint('Hata Yanıtı: ${e.response?.data}');
       rethrow;
     }
   }
@@ -73,9 +74,9 @@ class DioService {
       );
       return response;
     } on DioException catch (e) {
-      print('Dio Hatası: ${e.type}');
-      print('Hata Mesajı: ${e.message}');
-      print('Hata Yanıtı: ${e.response?.data}');
+      debugPrint('Dio Hatası: ${e.type}');
+      debugPrint('Hata Mesajı: ${e.message}');
+      debugPrint('Hata Yanıtı: ${e.response?.data}');
       rethrow;
     }
   }

@@ -10,6 +10,6 @@ abstract class LineRepository {
   });
   Future<Either<Failure, void>> addLine(LineEntity line);
   Future<Either<Failure, void>> updateLine(LineEntity line);
-  Future<Either<Failure, void>> deleteLine(int id);
-  Future<Either<Failure, void>> updateQuantity(int id, double quantity);
+  Future<Either<Failure, void>> deleteLine(String id);
+  Future<Either<Failure, void>> updateQuantity(String id, double quantity);
 }

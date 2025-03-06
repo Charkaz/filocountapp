@@ -1,16 +1,15 @@
+import 'package:birincisayim/features/line/presentation/bloc/line_bloc.dart';
 import 'package:birincisayim/features/product/data/models/product_model.dart';
 import 'package:flutter/material.dart';
-import '../../domain/entities/line_entity.dart';
-import 'package:birincisayim/ui/lines_page/bloc/lines_bloc/lines_bloc.dart'
-    as lines_bloc;
 import '../../../counter/data/models/count_model.dart';
 import '../../../product/data/services/product_service.dart';
-import '../models/line_model.dart';
-import 'line_service.dart';
+import '../../data/models/line_model.dart';
+import '../../domain/entities/line_entity.dart';
+import '../../domain/usecases/get_lines_by_count.dart';
 
 class OnEditingComplete {
   static Future<void> onEditingComplete(
-    lines_bloc.LinesBloc bloc,
+    LinesBloc bloc,
     TextEditingController miqdarController,
     TextEditingController barcodeController,
     BuildContext context,
@@ -47,9 +46,26 @@ class OnEditingComplete {
         return;
       }
 
-      final existingLine = await LineService.listLinesByProduct(
-        product: product,
-        count: count,
+      final result =
+          await bloc.getLinesByCount(GetLinesByCountParams(countId: count.id));
+      LineEntity? existingLine;
+      result.fold(
+        (failure) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Hata: ${failure.toString()}')),
+            );
+          }
+        },
+        (lines) {
+          try {
+            existingLine = lines.firstWhere(
+              (line) => line.product.barcode == product!.barcode,
+            );
+          } catch (_) {
+            existingLine = null;
+          }
+        },
       );
 
       if (!context.mounted) return;
@@ -186,7 +202,7 @@ class OnEditingComplete {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      '${existingLine.quantity}',
+                                      '${existingLine!.quantity}',
                                       style: TextStyle(
                                         color: Colors.blue.withOpacity(0.8),
                                         fontSize: 16,
@@ -343,35 +359,38 @@ class OnEditingComplete {
                             try {
                               final newQuantity =
                                   quantityController.text.isEmpty
-                                      ? (existingLine?.quantity ?? 0) + 1
+                                      ? 1.0
                                       : double.parse(quantityController.text
                                           .replaceAll(',', '.'));
 
-                              final finalQuantity = existingLine != null
-                                  ? existingLine.quantity + newQuantity
-                                  : newQuantity;
+                              if (newQuantity <= 0) {
+                                throw Exception(
+                                    'Miktar 0\'dan büyük olmalıdır');
+                              }
 
                               if (existingLine != null) {
-                                existingLine.updateQuantity(finalQuantity);
+                                bloc.add(UpdateQuantityEvent(
+                                  id: existingLine!.id,
+                                  countId: count.id,
+                                  quantity:
+                                      existingLine!.quantity + newQuantity,
+                                ));
                               } else {
                                 final line = LineModel.create(
                                   countId: count.id,
                                   product: product!,
-                                  quantity: finalQuantity,
+                                  quantity: newQuantity,
                                 );
-                                await LineService.addLine(line);
+                                bloc.add(AddLineEvent(line: line.toEntity()));
                               }
 
                               if (context.mounted) {
                                 Navigator.pop(context);
-                                bloc.add(lines_bloc.ListLineEvent(count.id));
                               }
                             } catch (e) {
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content:
-                                          Text('Geçerli bir miktar giriniz')),
+                                  SnackBar(content: Text(e.toString())),
                                 );
                               }
                             }

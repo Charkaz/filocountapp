@@ -1,3 +1,4 @@
+import 'package:birincisayim/features/line/presentation/bloc/line_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../counter/data/models/count_model.dart';
@@ -5,17 +6,14 @@ import '../../../counter/data/models/count_model.dart';
 import '../../../../core/widgets/scanning_animation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/services/line_service.dart';
-import '../../data/services/on_editing_complete.dart';
-import 'package:birincisayim/ui/lines_page/bloc/lines_bloc/lines_bloc.dart'
-    as lines_bloc;
+import '../dialogs/on_editing_complete.dart';
 
 class BarcodeText extends StatefulWidget {
   final TextEditingController barcodeController;
   final TextEditingController miqdarController;
   final FocusNode barcodeFocusNode;
   final CountModel count;
-  final lines_bloc.LinesBloc bloc;
+  final LinesBloc bloc;
 
   const BarcodeText({
     required this.barcodeController,
@@ -31,33 +29,19 @@ class BarcodeText extends StatefulWidget {
 }
 
 class _BarcodeTextState extends State<BarcodeText> {
-  bool _isInitialized = false;
+  bool _isInitialized = true;
   bool _isSingleMode = false;
   MobileScannerController? controller;
 
   @override
   void initState() {
     super.initState();
-    _initializeServices();
   }
 
   @override
   void dispose() {
     controller?.dispose();
     super.dispose();
-  }
-
-  Future<void> _initializeServices() async {
-    try {
-      await LineService.initializeRepository();
-      setState(() {
-        _isInitialized = true;
-      });
-    } catch (e) {
-      if (context.mounted) {
-        _showError(context, 'Servis başlatma hatası: ${e.toString()}');
-      }
-    }
   }
 
   Future<bool> _checkCameraPermission() async {
@@ -214,10 +198,10 @@ class _BarcodeTextState extends State<BarcodeText> {
                         color: Colors.grey[400],
                       ),
                       const SizedBox(width: 6),
-                      BlocBuilder<lines_bloc.LinesBloc, lines_bloc.LinesState>(
+                      BlocBuilder<LinesBloc, LineState>(
                         bloc: widget.bloc,
                         builder: (context, state) {
-                          if (state is lines_bloc.ListLines) {
+                          if (state is ListLines) {
                             return Text(
                               '${state.lines.length} Ürün',
                               style: TextStyle(

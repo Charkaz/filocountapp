@@ -62,7 +62,7 @@ class LineRepositoryImpl implements LineRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteLine(int id) async {
+  Future<Either<Failure, void>> deleteLine(String id) async {
     try {
       await localDataSource.deleteLine(id);
       return const Right(null);
@@ -72,7 +72,8 @@ class LineRepositoryImpl implements LineRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateQuantity(int id, double quantity) async {
+  Future<Either<Failure, void>> updateQuantity(
+      String id, double quantity) async {
     try {
       await localDataSource.updateQuantity(id, quantity);
       return const Right(null);

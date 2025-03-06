@@ -9,8 +9,8 @@ abstract class LineLocalDataSource {
   });
   Future<void> addLine(LineModel line);
   Future<void> updateLine(LineModel line);
-  Future<void> deleteLine(int id);
-  Future<void> updateQuantity(int id, double quantity);
+  Future<void> deleteLine(String id);
+  Future<void> updateQuantity(String id, double quantity);
 }
 
 class LineLocalDataSourceImpl implements LineLocalDataSource {
@@ -48,22 +48,41 @@ class LineLocalDataSourceImpl implements LineLocalDataSource {
   }
 
   @override
-  Future<void> deleteLine(int id) async {
-    await lineBox.delete(id);
+  Future<void> deleteLine(String id) async {
+    try {
+      final key = lineBox.keys.firstWhere(
+        (k) => lineBox.get(k)?.id == id,
+        orElse: () => throw Exception('Line not found'),
+      );
+      await lineBox.delete(key);
+    } catch (e) {
+      throw Exception('Silme işlemi başarısız: ${e.toString()}');
+    }
   }
 
   @override
-  Future<void> updateQuantity(int id, double quantity) async {
-    final line = lineBox.get(id);
-    if (line != null) {
-      final updatedLine = LineModel(
-        id: line.id,
-        countId: line.countId,
-        product: line.product,
-        quantity: quantity,
-        createdAt: line.createdAt,
+  Future<void> updateQuantity(String id, double quantity) async {
+    try {
+      final key = lineBox.keys.firstWhere(
+        (k) => lineBox.get(k)?.id == id,
+        orElse: () => throw Exception('Line not found'),
       );
-      await lineBox.put(id, updatedLine);
+      if (quantity < 0) {
+        throw Exception("Miktar eksi olamaz!");
+      }
+      final line = lineBox.get(key);
+      if (line != null) {
+        final updatedLine = LineModel(
+          id: line.id,
+          countId: line.countId,
+          product: line.product,
+          quantity: quantity,
+          createdAt: line.createdAt,
+        );
+        await lineBox.put(key, updatedLine);
+      }
+    } catch (e) {
+      throw Exception('Miktar güncelleme başarısız: ${e.toString()}');
     }
   }
 }

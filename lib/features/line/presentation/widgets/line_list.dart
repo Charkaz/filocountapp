@@ -1,13 +1,12 @@
+import 'package:birincisayim/features/line/domain/entities/line_entity.dart';
+import 'package:birincisayim/features/line/presentation/bloc/line_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:birincisayim/ui/lines_page/bloc/lines_bloc/lines_bloc.dart'
-    as lines_bloc;
 import '../../../counter/data/models/count_model.dart';
-import '../../data/models/line_model.dart';
-import '../../data/services/line_service.dart';
+import '../dialogs/line_options_dialog.dart';
 
 class LineList extends StatefulWidget {
-  final lines_bloc.LinesBloc bloc;
+  final LinesBloc bloc;
   final CountModel count;
 
   const LineList({
@@ -33,10 +32,10 @@ class _LineListState extends State<LineList> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<lines_bloc.LinesBloc, lines_bloc.LinesState>(
-      bloc: widget.bloc..add(lines_bloc.ListLineEvent(widget.count.id)),
+    return BlocBuilder<LinesBloc, LineState>(
+      bloc: widget.bloc..add(ListLineEvent(widget.count.id)),
       builder: (context, state) {
-        if (state is lines_bloc.ListLines) {
+        if (state is ListLines) {
           if (state.lines.isEmpty) {
             return Center(
               child: Column(
@@ -109,7 +108,7 @@ class _LineListState extends State<LineList> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildLineItem(BuildContext context, LineModel line) {
+  Widget _buildLineItem(BuildContext context, LineEntity line) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -131,7 +130,14 @@ class _LineListState extends State<LineList> with TickerProviderStateMixin {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onLongPress: () => _showOptionsDialog(context, line),
+          onLongPress: () => showDialog(
+            context: context,
+            builder: (context) => LineOptionsDialog(
+              line: line,
+              bloc: widget.bloc,
+              countId: widget.count.id.toString(),
+            ),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -251,172 +257,6 @@ class _LineListState extends State<LineList> with TickerProviderStateMixin {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  void _showOptionsDialog(BuildContext context, LineModel line) {
-    final TextEditingController quantityController =
-        TextEditingController(text: line.quantity.toString());
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF2A2A2A),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text(
-          'Ürün İşlemleri',
-          style: TextStyle(color: Colors.white),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: quantityController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                labelText: 'Miktar',
-                labelStyle: TextStyle(color: Colors.grey[400]),
-                filled: true,
-                fillColor: const Color(0xFF1E1E1E),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.save, color: Colors.blue),
-              title:
-                  const Text('Kaydet', style: TextStyle(color: Colors.white)),
-              onTap: () async {
-                try {
-                  final newQuantity = double.parse(
-                      quantityController.text.replaceAll(',', '.'));
-                  line.updateQuantity(newQuantity);
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                    widget.bloc.add(lines_bloc.ListLineEvent(widget.count.id));
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Geçerli bir miktar giriniz')),
-                    );
-                  }
-                }
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text('Sil', style: TextStyle(color: Colors.red)),
-              onTap: () {
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: const Color(0xFF2A2A2A),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    title: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.delete_outline,
-                            color: Colors.red,
-                            size: 20,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        const Text(
-                          'Ürünü Sil',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    content: Text(
-                      '${line.product.name} ürününü silmek istediğinize emin misiniz?',
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text(
-                          'İptal',
-                          style: TextStyle(
-                            color: Colors.grey[400],
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          try {
-                            await LineService.deleteLine(line.id);
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                              widget.bloc.add(
-                                  lines_bloc.ListLineEvent(widget.count.id));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Ürün başarıyla silindi'),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Hata: ${e.toString()}'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: const Text(
-                          'Sil',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ],
         ),
       ),
     );

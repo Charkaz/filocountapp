@@ -16,7 +16,7 @@ class ProductRepositoryImpl implements ProductRepository {
       final products = await localDataSource.getProducts();
       return Right(products.map((model) => model.toEntity()).toList());
     } catch (e) {
-      return Left(CacheFailure());
+      return const Left(CacheFailure());
     }
   }
 
@@ -27,7 +27,7 @@ class ProductRepositoryImpl implements ProductRepository {
       final product = await localDataSource.getProductByBarcode(barcode);
       return Right(product?.toEntity());
     } catch (e) {
-      return Left(CacheFailure());
+      return const Left(CacheFailure());
     }
   }
 
@@ -37,7 +37,7 @@ class ProductRepositoryImpl implements ProductRepository {
       await localDataSource.addProduct(ProductModel.fromEntity(product));
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure());
+      return const Left(CacheFailure());
     }
   }
 
@@ -47,7 +47,7 @@ class ProductRepositoryImpl implements ProductRepository {
       await localDataSource.updateProduct(ProductModel.fromEntity(product));
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure());
+      return const Left(CacheFailure());
     }
   }
 
@@ -57,7 +57,7 @@ class ProductRepositoryImpl implements ProductRepository {
       await localDataSource.deleteProduct(id);
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure());
+      return const Left(CacheFailure());
     }
   }
 }

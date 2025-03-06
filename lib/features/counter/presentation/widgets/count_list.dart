@@ -1,18 +1,20 @@
 import 'package:birincisayim/features/counter/data/models/count_model.dart';
-import 'package:birincisayim/features/line/presentation/pages/LinesPage.dart';
-import 'package:birincisayim/features/counter/domain/usecases/CountService.dart';
+import 'package:birincisayim/features/line/presentation/pages/lines_page.dart';
+import 'package:birincisayim/features/counter/domain/usecases/count_service.dart';
 import 'package:birincisayim/features/counter/data/repositories/post_count.dart';
-import 'package:dio/dio.dart';
+import 'package:birincisayim/features/line/domain/repositories/line_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CountList extends StatefulWidget {
   final List<CountModel> counts;
   final VoidCallback onCountDeleted;
+  final LineRepository lineRepository;
 
   const CountList({
     required this.counts,
     required this.onCountDeleted,
+    required this.lineRepository,
     super.key,
   });
 
@@ -252,9 +254,7 @@ class _CountListState extends State<CountList> {
 
   Future<void> _uploadCount(BuildContext context, CountModel count) async {
     try {
-      Navigator.pop(context); // Onay dialogunu kapat
-
-      // Yükleme göstergesi
+      Navigator.pop(context);
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -278,8 +278,7 @@ class _CountListState extends State<CountList> {
         ),
       );
 
-      // Merkeze aktar
-      final statusCode = await PostCount.post(count);
+      final statusCode = await PostCount.post(count, widget.lineRepository);
 
       if (statusCode == 201) {
         // Başarılı - Sayımı güncelle

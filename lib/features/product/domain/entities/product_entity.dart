@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
+import '../../data/models/product_model.dart';
 
 part 'product_entity.g.dart';
 
@@ -49,5 +50,15 @@ class ProductEntity extends Equatable {
       'barcode': barcode,
       'description': description,
     };
+  }
+
+  ProductModel toModel() {
+    return ProductModel(
+      id: id,
+      code: code,
+      name: name,
+      barcode: barcode,
+      description: description,
+    );
   }
 }

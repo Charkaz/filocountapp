@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../project/data/models/project_model.dart';
-import '../../domain/usecases/CountService.dart';
-import '../widgets/CountList.dart';
-import './CounterPage.dart';
+import '../../domain/usecases/count_service.dart';
+import '../widgets/count_list.dart';
+import '../../../line/data/repositories/line_repository_impl.dart';
+import '../../../line/data/datasources/line_local_data_source.dart';
+import '../../../line/domain/repositories/line_repository.dart';
+import 'package:hive/hive.dart';
+import '../../../line/data/models/line_model.dart';
 
 class CountListPage extends StatefulWidget {
   final ProjectModel project;
@@ -16,11 +20,19 @@ class CountListPage extends StatefulWidget {
 class _CountListPageState extends State<CountListPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
+  late final LineRepository lineRepository;
 
   @override
   void initState() {
     super.initState();
     CountService.initializeRepository();
+    _initializeLineRepository();
+  }
+
+  Future<void> _initializeLineRepository() async {
+    final box = await Hive.openBox<LineModel>('lines');
+    final dataSource = LineLocalDataSourceImpl(lineBox: box);
+    lineRepository = LineRepositoryImpl(localDataSource: dataSource);
   }
 
   @override
@@ -117,7 +129,7 @@ class _CountListPageState extends State<CountListPage> {
                       child: ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            final count = await CountService.createCount(
+                            await CountService.createCount(
                               title: _titleController.text,
                               projectId: widget.project.id,
                             );
@@ -303,6 +315,7 @@ class _CountListPageState extends State<CountListPage> {
                           CountList(
                             counts: snapshot.data!,
                             onCountDeleted: () => setState(() {}),
+                            lineRepository: lineRepository,
                           ),
                         ],
                       ),

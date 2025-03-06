@@ -9,39 +9,51 @@ abstract class LineEvent extends Equatable {
 
 class LoadLines extends LineEvent {}
 
-class AddLine extends LineEvent {
+class ListLineEvent extends LineEvent {
+  final String countId;
+
+  ListLineEvent(this.countId);
+}
+
+class AddLineEvent extends LineEvent {
   final LineEntity line;
 
-  const AddLine({required this.line});
+  const AddLineEvent({required this.line});
 
   @override
   List<Object> get props => [line];
 }
 
-class UpdateLine extends LineEvent {
+class UpdateLineEvent extends LineEvent {
   final LineEntity line;
 
-  const UpdateLine({required this.line});
+  const UpdateLineEvent({required this.line});
 
   @override
   List<Object> get props => [line];
 }
 
-class DeleteLine extends LineEvent {
-  final int id;
+class DeleteLineEvent extends LineEvent {
+  final String id;
+  final String countId;
 
-  const DeleteLine({required this.id});
+  const DeleteLineEvent({required this.id, required this.countId});
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id, countId];
 }
 
-class UpdateQuantity extends LineEvent {
-  final int id;
-  final int quantity;
+class UpdateQuantityEvent extends LineEvent {
+  final String id;
+  final String countId;
+  final double quantity;
 
-  const UpdateQuantity({required this.id, required this.quantity});
+  const UpdateQuantityEvent({
+    required this.id,
+    required this.countId,
+    required this.quantity,
+  });
 
   @override
-  List<Object> get props => [id, quantity];
+  List<Object> get props => [id, countId, quantity];
 }

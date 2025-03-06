@@ -12,8 +12,6 @@ import 'features/home/presentation/bloc/project_bloc.dart';
 import 'features/line/data/models/line_model.dart';
 import 'features/product/data/models/product_model.dart';
 import 'features/project/data/models/project_model.dart';
-import 'features/product/domain/entities/product_entity.dart';
-import 'core/di/injection_container.dart' as di;
 
 final getIt = GetIt.instance;
 
