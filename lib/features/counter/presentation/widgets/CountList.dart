@@ -252,39 +252,64 @@ class _CountListState extends State<CountList> {
 
   Future<void> _uploadCount(BuildContext context, CountModel count) async {
     try {
-      var id = await PostCount.post(count);
-      await CountService.updateIsSend(count.id);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Merkeze aktarıldı: $id"),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-        Navigator.pop(context);
-        setState(() {});
-      }
-    } on DioException catch (e) {
-      if (context.mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.type == DioExceptionType.connectionError
-                  ? "Sunucu ile bağlantı kurulamadı"
-                  : "Hata: ${e.message}",
+      Navigator.pop(context); // Onay dialogunu kapat
+
+      // Yükleme göstergesi
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: const AlertDialog(
+            backgroundColor: Color(0xFF2A2A2A),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: Colors.blue),
+                SizedBox(height: 16),
+                Text(
+                  'Merkeze aktarılıyor...',
+                  style: TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-            behavior: SnackBarBehavior.floating,
           ),
-        );
+        ),
+      );
+
+      // Merkeze aktar
+      final statusCode = await PostCount.post(count);
+
+      if (statusCode == 201) {
+        // Başarılı - Sayımı güncelle
+        await CountService.updateCount(count.copyWith(isSend: true));
+
+        if (context.mounted) {
+          Navigator.pop(context); // Yükleme göstergesini kapat
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Sayım başarıyla aktarıldı"),
+              backgroundColor: Colors.green,
+            ),
+          );
+          widget.onCountDeleted(); // Listeyi yenile
+        }
+      } else if (statusCode == 400) {
+        throw Exception('Geçersiz istek: Lütfen verilerinizi kontrol edin');
+      } else if (statusCode == 500) {
+        throw Exception('Sunucu hatası: Lütfen daha sonra tekrar deneyin');
+      } else {
+        throw Exception('Beklenmeyen bir hata oluştu (Kod: $statusCode)');
       }
     } catch (e) {
       if (context.mounted) {
-        Navigator.pop(context);
+        Navigator.pop(context); // Yükleme göstergesini kapat
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Hata: ${e.toString()}"),
-            behavior: SnackBarBehavior.floating,
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
           ),
         );
       }
@@ -396,51 +421,53 @@ class _CountListState extends State<CountList> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        title: const Text(
-          'Sayım İşlemleri',
-          style: TextStyle(color: Colors.white),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF3E3E4A),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.more_horiz,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            const Text(
+              'İşlemler',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+            if (!count.isSend) ...[
+              ListTile(
+                leading: const Icon(Icons.cloud_upload, color: Colors.blue),
+                title: const Text(
+                  'Merkeze Aktar',
+                  style: TextStyle(color: Colors.white),
                 ),
-                child: const Icon(
-                  Icons.cloud_upload_outlined,
-                  color: Colors.blue,
-                  size: 20,
-                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showUploadDialog(context, count);
+                },
               ),
+              const Divider(color: Colors.grey),
+            ],
+            ListTile(
+              leading: const Icon(Icons.delete_outline, color: Colors.red),
               title: const Text(
-                'Merkeze Aktar',
+                'Sil',
                 style: TextStyle(color: Colors.white),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                _showUploadDialog(context, count);
-              },
-            ),
-            ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.delete_outline,
-                  color: Colors.red,
-                  size: 20,
-                ),
-              ),
-              title: const Text(
-                'Sayımı Sil',
-                style: TextStyle(color: Colors.red),
               ),
               onTap: () {
                 Navigator.pop(context);

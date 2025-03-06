@@ -11,7 +11,8 @@ class LineRepositoryImpl implements LineRepository {
   LineRepositoryImpl({required this.localDataSource});
 
   @override
-  Future<Either<Failure, List<LineEntity>>> getLinesByCount(int countId) async {
+  Future<Either<Failure, List<LineEntity>>> getLinesByCount(
+      String countId) async {
     try {
       final lines = await localDataSource.getLinesByCount(countId);
       return Right(lines.map((line) => line.toEntity()).toList());

@@ -19,7 +19,7 @@ class GetLinesByCount
 }
 
 class GetLinesByCountParams extends Equatable {
-  final int countId;
+  final String countId;
 
   const GetLinesByCountParams({required this.countId});
 

@@ -12,8 +12,7 @@ class CountRepository extends GenericRepository<CountModel> {
   Future<bool> updateIsSend(String countId) async {
     final box = await openBox();
     var count = box.values.firstWhere((count) => count.id == countId);
-    count.isSend = true;
-    await count.save();
+    await box.put(countId, count.copyWith(isSend: true));
     return true;
   }
 

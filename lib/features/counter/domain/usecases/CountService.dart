@@ -7,9 +7,10 @@ import 'package:uuid/uuid.dart';
 class CountService {
   static late CountRepository repository;
   static final _uuid = Uuid();
+  static late Box<CountModel> _box;
 
   static Future<void> initializeRepository() async {
-    final box = await Hive.openBox<CountModel>('counts');
+    _box = await Hive.openBox<CountModel>('counts');
     repository = CountRepository('counts');
     await repository.initialize();
   }
@@ -43,8 +44,8 @@ class CountService {
   }
 
   static Future<List<CountModel>> listCountByProj(int projectId) async {
-    final counts = await repository.getByProjectId(projectId);
-    return counts..sort((a, b) => b.id.compareTo(a.id));
+    await initializeRepository();
+    return _box.values.where((count) => count.projectId == projectId).toList();
   }
 
   static Future<List<CountModel>> listCounts() async {
@@ -55,26 +56,11 @@ class CountService {
     return await repository.updateIsSend(countId);
   }
 
-  static Future<void> deleteCount(String countId) async {
-    try {
-      // Önce sayıma ait satırları sil
-      final linesBox = await Hive.openBox<LineModel>('lines');
-      final linesToDelete =
-          linesBox.values.where((line) => line.countId == countId).toList();
-      for (var line in linesToDelete) {
-        final key =
-            linesBox.keys.firstWhere((k) => linesBox.get(k)?.id == line.id);
-        await linesBox.delete(key);
-      }
+  static Future<void> deleteCount(String id) async {
+    await _box.delete(id);
+  }
 
-      // Sonra sayımı sil
-      final countsBox = await Hive.openBox<CountModel>('counts');
-      final countKey =
-          countsBox.keys.firstWhere((k) => countsBox.get(k)?.id == countId);
-      await countsBox.delete(countKey);
-    } catch (e) {
-      print('Silme hatası: $e');
-      rethrow;
-    }
+  static Future<void> updateCount(CountModel count) async {
+    await _box.put(count.id, count);
   }
 }

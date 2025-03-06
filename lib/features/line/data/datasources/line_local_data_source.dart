@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 import '../models/line_model.dart';
 
 abstract class LineLocalDataSource {
-  Future<List<LineModel>> getLinesByCount(int countId);
+  Future<List<LineModel>> getLinesByCount(String countId);
   Future<LineModel?> getLineByBarcode({
     required String barcode,
     required int countId,
@@ -19,7 +19,7 @@ class LineLocalDataSourceImpl implements LineLocalDataSource {
   LineLocalDataSourceImpl({required this.lineBox});
 
   @override
-  Future<List<LineModel>> getLinesByCount(int countId) async {
+  Future<List<LineModel>> getLinesByCount(String countId) async {
     return lineBox.values.where((line) => line.countId == countId).toList();
   }
 

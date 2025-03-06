@@ -19,7 +19,7 @@ class CountModel extends HiveObject {
   final List<LineModel> lines;
 
   @HiveField(4)
-  bool isSend;
+  final bool isSend;
 
   @HiveField(5)
   final String controlGuid;
@@ -32,6 +32,24 @@ class CountModel extends HiveObject {
     this.isSend = false,
     required this.controlGuid,
   });
+
+  CountModel copyWith({
+    String? id,
+    int? projectId,
+    String? description,
+    String? controlGuid,
+    List<LineModel>? lines,
+    bool? isSend,
+  }) {
+    return CountModel(
+      id: id ?? this.id,
+      projectId: projectId ?? this.projectId,
+      description: description ?? this.description,
+      lines: lines ?? this.lines,
+      isSend: isSend ?? this.isSend,
+      controlGuid: controlGuid ?? this.controlGuid,
+    );
+  }
 
   factory CountModel.fromJson(Map<String, dynamic> json) {
     return CountModel(
