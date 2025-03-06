@@ -1,7 +1,7 @@
 import 'package:birincisayim/features/project/data/models/project_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/project_bloc.dart';
+import '../../../home/presentation/bloc/project_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:birincisayim/features/counter/presentation/pages/count_list_page.dart';

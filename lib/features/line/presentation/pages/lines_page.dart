@@ -1,6 +1,6 @@
 import 'package:birincisayim/features/counter/data/models/count_model.dart';
 import 'package:birincisayim/features/line/presentation/bloc/line_bloc.dart';
-import 'package:birincisayim/features/product/domain/usecases/ProductService.dart';
+import 'package:birincisayim/features/product/domain/usecases/product_service.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 

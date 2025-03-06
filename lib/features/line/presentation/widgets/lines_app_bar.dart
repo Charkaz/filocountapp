@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../../counter/data/models/count_model.dart';
-import '../../../product/domain/usecases/ProductService.dart';
+import '../../../product/domain/usecases/product_service.dart';
 import '../dialogs/product_search_dialog.dart';
 
 class LinesAppBar extends StatelessWidget implements PreferredSizeWidget {

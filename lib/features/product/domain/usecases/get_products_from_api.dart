@@ -2,8 +2,8 @@ import 'package:birincisayim/commons/DioHelper.dart';
 
 import 'package:dio/dio.dart';
 
-import '../../../product/data/models/product_model.dart';
-import '../../../product/domain/entities/product_entity.dart';
+import '../../data/models/product_model.dart';
+import '../entities/product_entity.dart';
 
 class GetProductsFromApi {
   static Future<List<ProductEntity>> getAllProducts() async {
